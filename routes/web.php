@@ -43,13 +43,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/companies/{company}', [CompanyController::class, 'show'])->name('companies.show');
 
     // PKL Routes (Student and Teacher)
-    Route::middleware(['role:student'])->group(function () {
+    Route::middleware(['auth', 'role:student'])->group(function () {
         Route::get('/pkl', [PklController::class, 'studentPkl'])->name('pkl.student');
         Route::post('/pkl/company', [PklController::class, 'storeCompanyRequest'])->name('pkl.company.request');
         Route::post('/pkl/assign', [PklController::class, 'assignPkl'])->name('pkl.assign');
     });
 
-    Route::middleware(['role:teacher'])->group(function () {
+    Route::middleware(['auth', 'role:teacher'])->group(function () {
         Route::get('/pkl/teacher', [PklController::class, 'teacherPkl'])->name('pkl.teacher');
         Route::post('/pkl/approve/{pklAssignment}', [PklController::class, 'approvePkl'])->name('pkl.approve');
     });
