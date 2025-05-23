@@ -63,7 +63,7 @@ class PKLController extends Controller
         return view('pkl.teacher', compact('teacher', 'pklAssignments'));
     }
 
-    public function approvePkl(PklAssignment $pklAssignments)
+    public function approvePkl(PKL_Assignment $pklAssignment)
     {
         if ($pklAssignment->teacher_id !== Auth::user()->teacher->id) {
             abort(403);

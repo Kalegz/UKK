@@ -16,7 +16,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role', // Tetep biar kompatibel sama Filament
+        'role', 
         'profile_photo',
     ];
 
@@ -74,5 +74,15 @@ class User extends Authenticatable
     public function canAccessPanel(Panel $panel): bool
     {
         return $this->hasRole('admin');
+    }
+
+    public static function canEdit(User $user): bool
+    {
+        return auth()->user()->hasRole('admin');
+    }
+
+        public function syncRolesOnUpdate(array $roles)
+    {
+        $this->syncRoles($roles);
     }
 }
