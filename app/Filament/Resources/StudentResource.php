@@ -29,7 +29,7 @@ class StudentResource extends Resource
                     ->options(User::where('role', 'student')->pluck('name', 'id'))
                     ->required()
                     ->searchable()
-                    ->disabledOn('edit'), // Hanya bisa dipilih saat create, tidak diedit
+                    ->disabledOn('edit'),
                 Forms\Components\TextInput::make('nis')
                     ->label('NIS')
                     ->required()

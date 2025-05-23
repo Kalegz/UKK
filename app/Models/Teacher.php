@@ -13,7 +13,7 @@ class Teacher extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function PKL_Assignment()
+    public function pklAssignment()
     {
         return $this->hasMany(PKL_Assignment::class);
     }

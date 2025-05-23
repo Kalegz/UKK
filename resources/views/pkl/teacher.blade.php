@@ -12,7 +12,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($PKL_Assignment as $assignment)
+            @foreach ($pklAssignments as $assignment)
                 <tr>
                     <td><a href="{{ route('profile.show', $assignment->student->user) }}">{{ $assignment->student->user->name }}</a></td>
                     <td>{{ $assignment->company->name }}</td>

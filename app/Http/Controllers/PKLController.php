@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Company;
 use App\Models\CompanyRequest;
-use App\Models\PklAssignment;
+use App\Models\PKL_Assignment;
 use App\Models\Student;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
@@ -59,11 +59,11 @@ class PKLController extends Controller
     public function teacherPkl()
     {
         $teacher = Auth::user()->teacher;
-        $pklAssignments = $teacher->pklAssignments()->with('student.user', 'company')->get();
+        $pklAssignments = $teacher->pklAssignment()->with('student.user', 'company')->get();
         return view('pkl.teacher', compact('teacher', 'pklAssignments'));
     }
 
-    public function approvePkl(PklAssignment $pklAssignment)
+    public function approvePkl(PklAssignment $pklAssignments)
     {
         if ($pklAssignment->teacher_id !== Auth::user()->teacher->id) {
             abort(403);

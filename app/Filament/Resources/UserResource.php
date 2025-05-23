@@ -42,10 +42,11 @@ class UserResource extends Resource
                         'student' => 'Student',
                         'teacher' => 'Teacher',
                         'admin' => 'Admin',
+                        'anonymous' => 'Anonymous',
                     ])
                     ->required(),
                 Forms\Components\Section::make('Teacher Details')
-                    ->visible(fn ($get) => $get('teacher_fields_visible'))
+                    ->visible(fn ($get) => $get('role') === 'teacher')
                     ->schema([
                         Forms\Components\TextInput::make('subject')
                             ->required(),
@@ -73,6 +74,7 @@ class UserResource extends Resource
                         'student' => 'Student',
                         'teacher' => 'Teacher',
                         'admin' => 'Admin',
+                        'anonymous' => 'Anonymous',
                     ]),
             ])
             ->actions([
@@ -87,9 +89,7 @@ class UserResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
@@ -140,10 +140,8 @@ class UserResource extends Resource
         $record->role = $data['role'];
         $record->save();
 
-        // Assign role ke Spatie
-        if ($record->hasRole($data['role']) === false) {
-            $record->syncRoles([$data['role']]); // aman, otomatis hapus role sebelumnya
-        }
+        // Assign role pake Spatie
+        $record->syncRoles([$data['role']]);
 
         // Jika role = teacher, simpan data tambahan
         if (isset($data['teacher_data'])) {

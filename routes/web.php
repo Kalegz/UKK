@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PklController;
+use App\Http\Controllers\PKLController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ProfileController;
@@ -44,13 +44,13 @@ Route::middleware(['auth'])->group(function () {
 
     // PKL Routes (Student and Teacher)
     Route::middleware(['auth', 'role:student'])->group(function () {
-        Route::get('/pkl', [PklController::class, 'studentPkl'])->name('pkl.student');
-        Route::post('/pkl/company', [PklController::class, 'storeCompanyRequest'])->name('pkl.company.request');
-        Route::post('/pkl/assign', [PklController::class, 'assignPkl'])->name('pkl.assign');
+        Route::get('/pkl', [PKLController::class, 'studentPkl'])->name('pkl.student');
+        Route::post('/pkl/company', [PKLController::class, 'storeCompanyRequest'])->name('pkl.company.request');
+        Route::post('/pkl/assign', [PKLController::class, 'assignPkl'])->name('pkl.assign');
     });
 
     Route::middleware(['auth', 'role:teacher'])->group(function () {
-        Route::get('/pkl/teacher', [PklController::class, 'teacherPkl'])->name('pkl.teacher');
-        Route::post('/pkl/approve/{pklAssignment}', [PklController::class, 'approvePkl'])->name('pkl.approve');
+        Route::get('/pkl/teacher', [PKLController::class, 'teacherPkl'])->name('pkl.teacher');
+        Route::post('/pkl/approve/{pklAssignment}', [PKLController::class, 'approvePkl'])->name('pkl.approve');
     });
 });
