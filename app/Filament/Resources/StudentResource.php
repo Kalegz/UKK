@@ -11,6 +11,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Spatie\Permission\Models\Role;
 
 class StudentResource extends Resource
 {
@@ -26,7 +27,10 @@ class StudentResource extends Resource
             ->schema([
                 Forms\Components\Select::make('user_id')
                     ->label('User')
-                    ->options(User::where('role', 'student')->pluck('name', 'id'))
+                    ->options(function () {
+                        $studentRole = Role::where('name', 'student')->first();
+                        return User::role($studentRole)->pluck('name', 'id');
+                    })
                     ->required()
                     ->searchable()
                     ->disabledOn('edit'),
@@ -55,7 +59,10 @@ class StudentResource extends Resource
             ->filters([
                 Tables\Filters\SelectFilter::make('user_id')
                     ->label('User')
-                    ->options(User::where('role', 'student')->pluck('name', 'id')),
+                    ->options(function () {
+                        $studentRole = Role::where('name', 'student')->first();
+                        return User::role($studentRole)->pluck('name', 'id');
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -68,9 +75,7 @@ class StudentResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
@@ -84,8 +89,9 @@ class StudentResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->whereHas('user', function (Builder $query) {
-            $query->where('role', 'student');
+        $studentRole = Role::where('name', 'student')->first();
+        return parent::getEloquentQuery()->whereHas('user', function (Builder $query) use ($studentRole) {
+            $query->role($studentRole);
         });
     }
 }

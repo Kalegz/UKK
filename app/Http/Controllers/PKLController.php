@@ -45,7 +45,7 @@ class PKLController extends Controller
         ]);
 
         $student = Auth::user()->student;
-        $pklAssignment = $student->pklAssignment ?? new PklAssignment(['student_id' => $student->id]);
+        $pklAssignment = $student->pklAssignment ?? new PKL_Assignment(['student_id' => $student->id]);
 
         $pklAssignment->fill([
             'company_id' => $request->company_id,

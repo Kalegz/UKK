@@ -11,6 +11,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Spatie\Permission\Models\Role;
 
 class TeacherResource extends Resource
 {
@@ -26,10 +27,13 @@ class TeacherResource extends Resource
             ->schema([
                 Forms\Components\Select::make('user_id')
                     ->label('User')
-                    ->options(User::where('role', 'teacher')->pluck('name', 'id'))
+                    ->options(function () {
+                        $teacherRole = Role::where('name', 'teacher')->first();
+                        return User::role($teacherRole)->pluck('name', 'id');
+                    })
                     ->required()
                     ->searchable()
-                    ->disabledOn('edit'), // Hanya bisa dipilih saat create, tidak diedit
+                    ->disabledOn('edit'),
                 Forms\Components\TextInput::make('subject')
                     ->label('Subject')
                     ->required()
@@ -47,7 +51,10 @@ class TeacherResource extends Resource
             ->filters([
                 Tables\Filters\SelectFilter::make('user_id')
                     ->label('User')
-                    ->options(User::where('role', 'teacher')->pluck('name', 'id')),
+                    ->options(function () {
+                        $teacherRole = Role::where('name', 'teacher')->first();
+                        return User::role($teacherRole)->pluck('name', 'id');
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -60,9 +67,7 @@ class TeacherResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
@@ -76,8 +81,9 @@ class TeacherResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->whereHas('user', function (Builder $query) {
-            $query->where('role', 'teacher');
+        $teacherRole = Role::where('name', 'teacher')->first();
+        return parent::getEloquentQuery()->whereHas('user', function (Builder $query) use ($teacherRole) {
+            $query->role($teacherRole);
         });
     }
 }

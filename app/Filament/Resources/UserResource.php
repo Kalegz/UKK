@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
-use App\Models\Teacher;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -12,6 +11,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class UserResource extends Resource
 {
@@ -37,20 +37,13 @@ class UserResource extends Resource
                     ->minLength(8)
                     ->dehydrateStateUsing(fn ($state) => Hash::make($state))
                     ->dehydrated(fn ($state) => filled($state)),
-                Forms\Components\Select::make('role')
-                    ->options([
-                        'student' => 'Student',
-                        'teacher' => 'Teacher',
-                        'admin' => 'Admin',
-                        'anonymous' => 'Anonymous',
-                    ])
-                    ->required(),
-                Forms\Components\Section::make('Teacher Details')
-                    ->visible(fn ($get) => $get('role') === 'teacher')
-                    ->schema([
-                        Forms\Components\TextInput::make('subject')
-                            ->required(),
-                    ]),
+                Forms\Components\Select::make('roles')
+                    ->label('Role')
+                    ->relationship('roles', 'name')
+                    ->options(Role::all()->pluck('name', 'id')) // Pakai ID sebagai value
+                    ->required()
+                    ->multiple(false) // Single role
+                    ->preload(),
                 Forms\Components\FileUpload::make('profile_photo')
                     ->image()
                     ->directory('profile_photos')
@@ -64,18 +57,15 @@ class UserResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')->searchable(),
                 Tables\Columns\TextColumn::make('email')->searchable(),
-                Tables\Columns\TextColumn::make('role')->badge(),
+                Tables\Columns\TextColumn::make('roles.name')
+                    ->badge()
+                    ->formatStateUsing(fn ($state) => ucfirst($state)),
                 Tables\Columns\ImageColumn::make('profile_photo')
                     ->defaultImageUrl(asset('images/default-profile.png')),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('role')
-                    ->options([
-                        'student' => 'Student',
-                        'teacher' => 'Teacher',
-                        'admin' => 'Admin',
-                        'anonymous' => 'Anonymous',
-                    ]),
+                Tables\Filters\SelectFilter::make('roles')
+                    ->relationship('roles', 'name'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -101,52 +91,17 @@ class UserResource extends Resource
         ];
     }
 
-    public static function mutateFormDataBeforeCreate(array $data): array
-    {
-        return static::mutateUserData($data);
-    }
-
-    public static function mutateFormDataBeforeSave(array $data): array
-    {
-        return static::mutateUserData($data);
-    }
-
-    protected static function mutateUserData(array $data): array
-    {
-        if ($data['role'] === 'teacher') {
-            $teacherData = [
-                'subject' => $data['subject'],
-            ];
-            unset($data['subject']);
-            $data['teacher_data'] = $teacherData;
-        }
-
-        return $data;
-    }
-
     public static function afterCreate(Model $record, array $data): void
     {
-        static::saveRelatedData($record, $data);
+        if (isset($data['roles'])) {
+            $record->syncRoles($data['roles']);
+        }
     }
 
     public static function afterSave(Model $record, array $data): void
     {
-        static::saveRelatedData($record, $data);
-    }
-
-    protected static function saveRelatedData(Model $record, array $data): void
-    {
-        // Update kolom role di users
-        $record->role = $data['role'];
-        $record->save();
-
-        // Assign role pake Spatie
-        $record->syncRoles([$data['role']]);
-
-        // Jika role = teacher, simpan data tambahan
-        if (isset($data['teacher_data'])) {
-            $teacher = $record->teacher ?? new Teacher(['user_id' => $record->id]);
-            $teacher->fill($data['teacher_data'])->save();
+        if (isset($data['roles'])) {
+            $record->syncRoles($data['roles']);
         }
     }
 }
