@@ -32,7 +32,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Student Routes
     Route::get('/students', [StudentController::class, 'index'])->name('students.index');
-    Route::get('/students/class/{class}', [StudentController::class, 'byClass'])->name('students.byClass');
+    Route::get('/students/{class}/{major}', [StudentController::class, 'byClass'])->name('students.byClass');
 
     // Teacher Routes
     Route::get('/teachers', [TeacherController::class, 'index'])->name('teachers.index');

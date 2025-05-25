@@ -3,7 +3,7 @@
 @section('content')
     <div class="row">
         <div class="col-md-12">
-            <h2>Students in Class {{ $class }}</h2>
+            <h2>Students in Class {{ $class }} - {{ $major }}</h2>
             <a href="{{ route('students.index') }}" class="btn btn-secondary mb-3">Back to Classes</a>
             <table class="table table-striped">
                 <thead>
