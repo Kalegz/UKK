@@ -27,6 +27,15 @@ class CompanyResource extends Resource
                     ->maxLength(255),
                 Forms\Components\Textarea::make('address')
                     ->maxLength(65535),
+                Forms\Components\TextInput::make('business fields')
+                    ->label('Business Fields')
+                    ->maxLength(100),
+                Forms\Components\TextInput::make('contact')
+                    ->label('Contact')
+                    ->maxLength(100),
+                Forms\Components\TextInput::make('email')
+                    ->label('Email')
+                    ->maxLength(100),
                 Forms\Components\Toggle::make('is_approved')
                     ->required()
                     ->onColor('success')
@@ -39,7 +48,10 @@ class CompanyResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')->searchable(),
+                Tables\Columns\TextColumn::make('business fields')->label('Business Fields'),
                 Tables\Columns\TextColumn::make('address')->limit(50),
+                Tables\Columns\TextColumn::make('contact')->label('Contact'),
+                Tables\Columns\TextColumn::make('email')->label('Email'),
                 Tables\Columns\BooleanColumn::make('is_approved'),
             ])
             ->filters([

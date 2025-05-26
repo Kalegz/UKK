@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
+use Illuminate\Foundation\Auth\ResetsPasswords;
 
-class ForgotPasswordController extends Controller
+class ResetPasswordController extends Controller
 {
-    use SendsPasswordResetEmails;
+    use ResetsPasswords;
+
+    protected $redirectTo = '/dashboard';
 
     public function __construct()
     {

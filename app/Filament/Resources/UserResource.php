@@ -42,7 +42,7 @@ class UserResource extends Resource
                     ->relationship('roles', 'name')
                     ->options(Role::all()->pluck('name', 'id')) // Pakai ID sebagai value
                     ->required()
-                    ->multiple(false) // Single role
+                    ->multiple(false)
                     ->preload(),
                 Forms\Components\FileUpload::make('profile_photo')
                     ->image()

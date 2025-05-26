@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Http\Livewire;
+
+use Livewire\Component;
+use App\Models\Student;
+
+class StudentIndex extends Component
+{
+    public $classes;
+
+    public function mount()
+    {
+        // Fetch distinct class and major combinations
+        $this->classes = Student::select('class', 'major')
+            ->distinct()
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'class' => $item->class,
+                    'major' => $item->major,
+                ];
+            })->toArray();
+    }
+
+    public function render()
+    {
+        return view('livewire.students.student-index');
+    }
+}

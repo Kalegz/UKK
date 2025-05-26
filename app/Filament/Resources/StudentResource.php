@@ -2,16 +2,17 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\StudentResource\Pages;
-use App\Models\Student;
-use App\Models\User;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
+use App\Models\User;
 use Filament\Tables;
+use App\Models\Student;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
+use Filament\Resources\Resource;
 use Spatie\Permission\Models\Role;
+use Filament\Forms\Components\Textarea;
+use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\StudentResource\Pages;
 
 class StudentResource extends Resource
 {
@@ -36,14 +37,27 @@ class StudentResource extends Resource
                     ->disabledOn('edit'),
                 Forms\Components\TextInput::make('nis')
                     ->label('NIS')
-                    ->required()
                     ->unique(ignoreRecord: true),
+                Forms\Components\Select::make('gender')
+                    ->options([
+                        'Laki-Laki' => 'Laki-Laki',
+                        'Perempuan' => 'Perempuan',
+                    ]),
                 Forms\Components\TextInput::make('class')
                     ->label('Class')
                     ->required(),
                 Forms\Components\TextInput::make('major')
                     ->label('Major')
                     ->required(),
+                Forms\Components\Textarea::make('address')
+                    ->label('Address')
+                    ->maxLength(100),
+                Forms\Components\TextInput::make('contact')
+                    ->label('Contact')
+                    ->maxLength(100),
+                Forms\Components\TextInput::make('email')
+                    ->label('Email')
+                    ->maxLength(100),
             ]);
     }
 
@@ -53,8 +67,12 @@ class StudentResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')->label('User Name')->searchable(),
                 Tables\Columns\TextColumn::make('nis')->label('NIS')->searchable(),
+                Tables\Columns\TextColumn::make('gender')->label('Gender'),
                 Tables\Columns\TextColumn::make('class')->label('Class')->searchable(),
                 Tables\Columns\TextColumn::make('major')->label('Major')->searchable(),
+                Tables\Columns\TextColumn::make('address')->label('Address'),
+                Tables\Columns\TextColumn::make('contact')->label('Contact'),
+                Tables\Columns\TextColumn::make('email')->label('Email'),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('user_id')

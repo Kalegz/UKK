@@ -13,7 +13,7 @@
             @elseif ($user->isTeacher())
                 <p>Subject: {{ $user->teacher->subject }}</p>
             @endif
-            <a href="{{ route('profile.edit') }}" class="btn btn-primary">Edit Profile</a>
+            <!-- <a href="{{ route('profile.edit') }}" class="btn btn-primary">Edit Profile</a> -->
         </div>
     </div>
 @endsection

@@ -1,0 +1,29 @@
+<?php
+
+namespace App\Http\Livewire;
+
+use Livewire\Component;
+use App\Models\Student;
+
+class StudentByClass extends Component
+{
+    public $class;
+    public $major;
+    public $students;
+
+    public function mount($class, $major)
+    {
+        $this->class = $class;
+        $this->major = $major;
+
+        $this->students = Student::where('class', $class)
+            ->where('major', $major)
+            ->with(['user', 'pklAssignment.company', 'pklAssignment.teacher.user'])
+            ->get();
+    }
+
+    public function render()
+    {
+        return view('livewire.students.student-by-class');
+    }
+}
